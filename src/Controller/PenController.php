@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Faker\Factory;
 use App\Entity\Pen;
+use App\Repository\BrandRepository;
 use OpenApi\Attributes as OA;
 use App\Repository\PenRepository;
 use App\Repository\TypeRepository;
@@ -56,6 +57,7 @@ class PenController extends AbstractController
         Request $request,
         EntityManagerInterface $em,
         TypeRepository $typeRepository,
+        BrandRepository $brandRepository,
         MaterialRepository $materialRepository
     ): JsonResponse {
         try {
@@ -92,6 +94,17 @@ class PenController extends AbstractController
                     throw new \Exception("Le matériel renseigné n'existe pas");
 
                 $pen->setMaterial($material);
+            }
+            
+
+            if(!empty($data['brand']))
+            {
+                $brand = $brandRepository->find($data['brand']);
+
+                if(!$brand)
+                    throw new \Exception("La marque renseignée n'existe pas");
+
+                $pen->setBrand($brand);
             }
 
             $em->persist($pen);
